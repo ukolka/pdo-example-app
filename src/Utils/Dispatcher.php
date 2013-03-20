@@ -24,16 +24,16 @@ class Dispatcher {
                 $this->dispatch($matches['controller']);
             }
         } else {
-            throw new \Exception('URL doesn\'t match.');
+            $this->dispatch();
         }
     }
 
     /**
-     * @param $controller controller class name
+     * @param string $controller controller class name
      * @param string $action method of the controller.
      * @throws \Exception
      */
-    private function dispatch($controller, $action = 'index') {
+    private function dispatch($controller = 'DefaultController', $action = 'index') {
         $controller = ucfirst($controller);
         $className = "\\Controllers\\$controller";
         $templatePath = SRC_DIR . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR .
