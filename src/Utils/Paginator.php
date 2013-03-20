@@ -22,10 +22,15 @@ class Paginator {
         $pageCount = (int) ceil($this->numRecords / $this->recordsPerPage);
         $pages['First'] = 1;
         $pages['Previous'] = $this->currentPage > 1 ? $this->currentPage - 1 : $this->currentPage;
-        for ($i = $this->currentPage - 3; $i < $this->currentPage + 3; $i++) {
-            if ($i > 0 && $i <= $pageCount) {
-                $pages[(string) $i] = $i;
+        $count = 0;
+        $i = 0;
+        while ($count < 7) {
+            $pageNum = $this->currentPage - 3 + $i;
+            if ($pageNum > 0 && $pageNum <= $pageCount ) {
+                $pages[(string) $pageNum] = $pageNum;
+                $count += 1;
             }
+            $i += 1;
         }
         $pages['Next'] = $this->currentPage < $pageCount ? $this->currentPage + 1: $this->currentPage;
         $pages['Last'] = $pageCount;
