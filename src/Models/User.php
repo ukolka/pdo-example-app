@@ -25,7 +25,9 @@ INSERT INTO users (username, password, description, level)
 VALUES (:username, :password, :description, :level);
 SQL;
 
-    private static $getAllQuery = "SELECT id, username, password, description, level FROM users;";
+    private static $searchQuery = "SELECT * FROM users WHERE username = :username OR description LIKE :keyword;";
+
+    private static $getAllQuery = "SELECT * FROM users;";
 
     public function __construct($id = null, $username, $password, $description, $level) {
         if (!isset($this->username)) {
@@ -70,6 +72,16 @@ SQL;
         $stmt->bindParam(':description', $this->description);
         $stmt->bindParam(':level', $this->level);
         return $stmt->execute();
+    }
+
+    public static function search($term) {
+        $con = \DB\Connection::getConnection();
+        $stmt = $con->prepare(self::$searchQuery);
+        $stmt->bindParam(':username', $term);
+        $keyword = "%$term%";
+        $stmt->bindParam(':keyword', $keyword);
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, get_class());
     }
 
     /**

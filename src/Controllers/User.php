@@ -37,7 +37,15 @@ class User extends AbstractController {
         $templateData = array(
             'page_title' => 'List Users'
         );
-        $users = \Models\User::getAll();
+        $users = array();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Search
+            if (isset($_POST['search'])) {
+                $users = \Models\User::search(strtolower(trim($_POST['search'])));
+            }
+        } else {
+            $users = \Models\User::getAll();
+        }
         $templateData['users'] = $users;
         echo $this->renderTemplate($templateData);
     }
