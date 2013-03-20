@@ -25,13 +25,16 @@ INSERT INTO users (username, password, description, level)
   VALUES (:username, :password, :description, :level);
 SQL;
 
-    private static $countQuery = "SELECT COUNT(id) as count FROM users;";
+    private static $countQuery = "SELECT COUNT(id) AS count FROM users;";
 
     private static $searchQuery = <<<SQL
 SELECT * FROM users
   WHERE username = :username OR description LIKE :keyword
   LIMIT :limit OFFSET :offset;
 SQL;
+
+    private static $searchCountQeury =
+        "SELECT COUNT(id) AS count FROM users WHERE username = :username OR description LIKE :keyword;";
 
     private static $getAllQuery = "SELECT * FROM users LIMIT :limit OFFSET :offset;";
 
@@ -104,6 +107,16 @@ SQL;
         $stmt->bindParam(':offset', intval($offset, 10), \PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_CLASS, get_class());
+    }
+
+    public static function searchCount($term) {
+        $con = \DB\Connection::getConnection();
+        $stmt = $con->prepare(self::$searchCountQeury);
+        $stmt->bindParam(':username', $term);
+        $keyword = "%$term%";
+        $stmt->bindParam(':keyword', $keyword);
+        $stmt->execute();
+        return $stmt->fetch()['count'];
     }
 
     /**

@@ -10,33 +10,44 @@
     </header>
     <div class="content">
         <div class="search">
-            <form action="" method="post">
+            <form action="/user/" method="post">
                 <label for="search">Search</label>
-                <input type="text" id="search" name="search" value="<?php if (isset($search)) echo $search; ?>" placeholder="Type name here..."/>
+                <input type="text" id="search" name="search"
+                       value="<?php if (isset($search)) echo $search; ?>" placeholder="Type name here..."/>
+                <input type="hidden" name="num_per_page" value="<?php echo $num_per_page; ?>" />
                 <input type="submit" value="Go!" />
             </form>
         </div>
         <div class="controls">
-            <form action="" method="post">
+            <form action="/user/" method="post">
                 <label for="num_per_page">Results On Page</label>
                 <input type="hidden" name="search" value="<?php if (isset($search)) echo $search; ?>" />
                 <select name="num_per_page" id="num_per_page">
                     <?php foreach (array('10', '20', '50', 'All') as $num) { ?>
                         <option value="<?php echo $num; ?>"
-                            <?php if (isset($num_per_page) && $num === $num_per_page) echo 'selected="selected"'; ?>>
+                            <?php if (isset($num_per_page) && $num == $num_per_page) echo 'selected="selected"'; ?>>
                             <?php echo $num; ?>
                         </option>
                     <?php } ?>
                 </select>
             </form>
-            <ul>
-                <li><a href="/user/">First</a></li>
-                <li><a href="/user/">Previous</a></li>
-                <li><a href="/user/">1</a></li>
-                <li><a href="/user/">2</a></li>
-                <li><a href="/user/">3</a></li>
-                <li><a href="/user/">Next</a></li>
-                <li><a href="/user/">Last</a></li>
+            <ul> |
+                <?php
+                $p = new \Utils\Paginator($user_count, $page, $num_per_page);
+                foreach ($p->paginate() as $page_name => $page_number) { ?>
+                    <li>
+                        <a href="/user?page=<?php echo $page_number; ?>&search=<?php if (isset($search)) echo $search;?>&num_per_page=<?php if (isset($num_per_page)) echo $num_per_page; ?>">
+                            <?php if ($page_name == $page) { ?>
+                                <strong><?php echo $page_name; ?></strong>
+                            <?php
+                            } else {
+                                echo $page_name;
+                            } ?>
+                        </a> |
+                    </li>
+                <?php
+                }
+                ?>
             </ul>
         </div>
         <table>
