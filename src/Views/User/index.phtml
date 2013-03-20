@@ -2,6 +2,7 @@
 <html>
     <head>
         <?php include_once COMMON_TEMPLATES_DIR . 'head.phtml'; ?>
+        <script type="text/javascript" src="/assets/js/userlist.js"></script>
     </head>
     <body>
     <header>
@@ -11,16 +12,21 @@
         <div class="search">
             <form action="" method="post">
                 <label for="search">Search</label>
-                <input type="text" id="search" name="search" value="" placeholder="Type name here..."/>
+                <input type="text" id="search" name="search" value="<?php if (isset($search)) echo $search; ?>" placeholder="Type name here..."/>
                 <input type="submit" value="Go!" />
+            </form>
         </div>
         <div class="controls">
-                <label for="num_pages">Results On Page</label>
-                <select name="num_pages" id="num_pages">
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="50">30</option>
-                    <option value="All">All</option>
+            <form action="" method="post">
+                <label for="num_per_page">Results On Page</label>
+                <input type="hidden" name="search" value="<?php if (isset($search)) echo $search; ?>" />
+                <select name="num_per_page" id="num_per_page">
+                    <?php foreach (array('10', '20', '50', 'All') as $num) { ?>
+                        <option value="<?php echo $num; ?>"
+                            <?php if (isset($num_per_page) && $num === $num_per_page) echo 'selected="selected"'; ?>>
+                            <?php echo $num; ?>
+                        </option>
+                    <?php } ?>
                 </select>
             </form>
             <ul>

@@ -22,14 +22,20 @@ class User {
 
     private $saveQuery = <<<SQL
 INSERT INTO users (username, password, description, level)
-VALUES (:username, :password, :description, :level);
+  VALUES (:username, :password, :description, :level);
 SQL;
 
-    private static $searchQuery = "SELECT * FROM users WHERE username = :username OR description LIKE :keyword;";
+    private static $countQuery = "SELECT COUNT(id) as count FROM users;";
 
-    private static $getAllQuery = "SELECT * FROM users;";
+    private static $searchQuery = <<<SQL
+SELECT * FROM users
+  WHERE username = :username OR description LIKE :keyword
+  LIMIT :limit OFFSET :offset;
+SQL;
 
-    public function __construct($id = null, $username, $password, $description, $level) {
+    private static $getAllQuery = "SELECT * FROM users LIMIT :limit OFFSET :offset;";
+
+    public function __construct($id = null, $username = null, $password = null, $description = null, $level = null) {
         if (!isset($this->username)) {
             $this->id = $id;
             $this->username = $username;
@@ -74,23 +80,43 @@ SQL;
         return $stmt->execute();
     }
 
-    public static function search($term) {
+    public static function count() {
+        $con = \DB\Connection::getConnection();
+        $stmt = $con->prepare(self::$countQuery);
+        $stmt->execute();
+        return $stmt->fetch()['count'];
+    }
+
+    /**
+     * Looks up user by name or description.
+     * @param $term
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
+    public static function search($term, $limit=10, $offset=1) {
         $con = \DB\Connection::getConnection();
         $stmt = $con->prepare(self::$searchQuery);
         $stmt->bindParam(':username', $term);
         $keyword = "%$term%";
         $stmt->bindParam(':keyword', $keyword);
+        $stmt->bindParam(':limit', intval($limit, 10), \PDO::PARAM_INT);
+        $stmt->bindParam(':offset', intval($offset, 10), \PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_CLASS, get_class());
     }
 
     /**
      * Returns list of users.
+     * @param int $offset
+     * @param int $limit
      * @return array
      */
-    public static function getAll() {
+    public static function getAll( $limit=10, $offset=1) {
         $con = \DB\Connection::getConnection();
         $stmt = $con->prepare(self::$getAllQuery);
+        $stmt->bindParam(':limit', intval($limit, 10), \PDO::PARAM_INT);
+        $stmt->bindParam(':offset', intval($offset, 10), \PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_CLASS, get_class());
     }

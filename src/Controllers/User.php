@@ -38,13 +38,21 @@ class User extends AbstractController {
             'page_title' => 'List Users'
         );
         $users = array();
+        $page = 1;
+        $num_per_page = 10;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Number of results per page
+            if (isset($_POST['num_per_page'])) {
+                $num_per_page = $_POST['num_per_page'] !== 'All' ? $_POST['num_per_page'] : \Models\User::count();
+                $templateData['num_per_page'] = $_POST['num_per_page'];
+            }
             // Search
-            if (isset($_POST['search'])) {
-                $users = \Models\User::search(strtolower(trim($_POST['search'])));
+            if (isset($_POST['search']) ) {
+                $users = \Models\User::search(strtolower(trim($_POST['search'])), $num_per_page, $page);
+                $templateData['search'] = $_POST['search'];
             }
         } else {
-            $users = \Models\User::getAll();
+            $users = \Models\User::getAll($num_per_page, $page);
         }
         $templateData['users'] = $users;
         echo $this->renderTemplate($templateData);
@@ -52,6 +60,5 @@ class User extends AbstractController {
 
     public function generate() {
         \Utils\UserGenerator::makeUsers();
-
     }
 }
