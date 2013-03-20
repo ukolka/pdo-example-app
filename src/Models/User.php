@@ -76,7 +76,8 @@ SQL;
         $stmt = $con->prepare($this->existsQuery);
         $stmt->bindParam(':username', $this->username);
         $stmt->execute();
-        return intval($stmt->fetch()['count'], 10) > 0;
+        $result = $stmt->fetch();
+        return intval($result['count'], 10) > 0;
     }
 
     /**
@@ -126,7 +127,8 @@ SQL;
         $con = \DB\Connection::getConnection();
         $stmt = $con->prepare(self::$countQuery);
         $stmt->execute();
-        return $stmt->fetch()['count'];
+        $result = $stmt->fetch();
+        return $result['count'];
     }
 
     /**
@@ -157,7 +159,8 @@ SQL;
         $keyword = "%$term%";
         $stmt->bindParam(':keyword', $keyword);
         $stmt->execute();
-        return $stmt->fetch()['count'];
+        $result = $stmt->fetch();
+        return $result['count'];
     }
 
     /**

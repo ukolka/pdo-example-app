@@ -17,16 +17,18 @@ abstract class AbstractController {
     }
 
     protected function renderTemplate(array $data = array()) {
-        if (!file_exists($this->templatePath)) {
-            throw new \Exception("$this->templatePath file does not exist.");
+        $templatePath = $this->templatePath;
+        if (!file_exists($templatePath)) {
+            throw new \Exception("$templatePath file does not exist.");
         }
-        return call_user_func(function () use ($data) {
+
+        return call_user_func(function () use ($data, $templatePath) {
             extract($data, EXTR_SKIP);
             ob_start();
             if (DEBUG === true) {
-                require_once($this->templatePath);
+                require_once($templatePath);
             } else {
-                include_once($this->templatePath);
+                include_once($templatePath);
             }
             return ob_get_clean();
         });

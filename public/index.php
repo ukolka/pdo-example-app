@@ -6,6 +6,7 @@
  */
 
 define('DEBUG', True);
+define('APPFOG', True);
 define('ROOT_DIR', dirname(dirname(__FILE__)));
 define('SRC_DIR', ROOT_DIR . DIRECTORY_SEPARATOR . 'src');
 define('COMMON_TEMPLATES_DIR', SRC_DIR . DIRECTORY_SEPARATOR . 'Views' .
