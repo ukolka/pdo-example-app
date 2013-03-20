@@ -25,6 +25,11 @@ INSERT INTO users (username, password, description, level)
   VALUES (:username, :password, :description, :level);
 SQL;
 
+    private $updateQuery = <<<SQL
+UPDATE users SET username=:username, password=:password, description=:description, level=:level
+  WHERE id = :id;
+SQL;
+
     private static $countQuery = "SELECT COUNT(id) AS count FROM users;";
 
     private static $searchQuery = <<<SQL
@@ -38,11 +43,15 @@ SQL;
 
     private static $getAllQuery = "SELECT * FROM users LIMIT :limit OFFSET :offset;";
 
+    private static $deleteQuery = "DELETE FROM users WHERE username = :username;";
+
+    private static $getQuery = "SELECT * FROM users WHERE username = :username;";
+
     public function __construct($id = null, $username = null, $password = null, $description = null, $level = null) {
         if (!isset($this->username)) {
             $this->id = $id;
             $this->username = $username;
-            $this->password = $this->hashPassword($password);
+            $this->setPassword($password);
             $this->description = $description;
             $this->level = $level;
         }
@@ -53,8 +62,8 @@ SQL;
      * @param $password
      * @return string
      */
-    private function hashPassword($password) {
-        return md5(self::$salt . $password);
+    public function setPassword($password) {
+        $this->password = md5(self::$salt . $password);
     }
 
     /**
@@ -79,8 +88,37 @@ SQL;
         $stmt->bindParam(':username', $this->username);
         $stmt->bindParam(':password', $this->password);
         $stmt->bindParam(':description', $this->description);
+        $stmt->bindParam(':level', $this->level, \PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    /**
+     * Update existing database record.
+     * @return bool
+     */
+    public function update() {
+        $con = \DB\Connection::getConnection();
+        $stmt = $con->prepare($this->updateQuery);
+        $stmt->bindParam(':id', $this->id, \PDO::PARAM_INT);
+        $stmt->bindParam(':username', $this->username);
+        $stmt->bindParam(':password', $this->password);
+        $stmt->bindParam(':description', $this->description);
         $stmt->bindParam(':level', $this->level);
         return $stmt->execute();
+    }
+
+    /**
+     * Compare with other user for equality.
+     * @param User $other
+     * @return bool
+     */
+    public function eq(User $other) {
+        foreach ($this as $prop => $value) {
+            if ($other->$prop !== $value) {
+                return False;
+            }
+        }
+        return True;
     }
 
     public static function count() {
@@ -125,13 +163,34 @@ SQL;
      * @param int $limit
      * @return array
      */
-    public static function getAll( $limit=10, $offset=1) {
+    public static function getAll($limit=10, $offset=1) {
         $con = \DB\Connection::getConnection();
         $stmt = $con->prepare(self::$getAllQuery);
         $stmt->bindParam(':limit', intval($limit, 10), \PDO::PARAM_INT);
         $stmt->bindParam(':offset', intval($offset, 10), \PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_CLASS, get_class());
+    }
+
+    /**
+     * Get a single user by username.
+     * @param $username
+     * @return mixed
+     */
+    public static function get($username) {
+        $con = \DB\Connection::getConnection();
+        $stmt = $con->prepare(self::$getQuery);
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+        $stmt->setFetchMode(\PDO::FETCH_CLASS, get_class());
+        return $stmt->fetch();
+    }
+
+    public static function delete($username) {
+        $con = \DB\Connection::getConnection();
+        $stmt = $con->prepare(self::$deleteQuery);
+        $stmt->bindParam(':username', $username);
+        return $stmt->execute();
     }
 
     public function __toString() {

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <?php include_once COMMON_TEMPLATES_DIR . 'head.phtml'; ?>
+        </head>
+        <body>
+            <header>
+                <?php include_once COMMON_TEMPLATES_DIR . 'navigation.phtml'; ?>
+            </header>
+            <div class="content">
+                <?php if ($success === True) { ?>
+                    <h3>User deleted successfully.</h3>
+                <?php } else { ?>
+                    <h3>User deletion failed.</h3>
+                <?php } ?>
+            </div>
+        </body>
+    </html>

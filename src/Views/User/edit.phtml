@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <?php include_once COMMON_TEMPLATES_DIR . 'head.phtml'; ?>
+    </head>
+    <body>
+        <header>
+            <?php include_once COMMON_TEMPLATES_DIR . 'navigation.phtml'; ?>
+        </header>
+        <div class="content">
+            <form action="" method="post">
+                <table>
+                    <caption><h1>Edit User</h1></caption>
+                    <tbody>
+                    <tr>
+                        <th><label for="username">Username</label></th>
+                        <td><input type="text" id="username" name="username" value="<?php echo $user->username; ?>"></td>
+                    </tr>
+                    <tr>
+                        <th><label for="password">Password</label></th>
+                        <td><input type="password" id="password" name="password" value=""/></td>
+                    </tr>
+                    <tr>
+                        <th><label for="description">Description</label></th>
+                        <td>
+                            <textarea placeholder="Description here..." id="description" name="description"
+                                      rows="10" cols="30"><?php echo $user->description; ?></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for="level">Level</label></th>
+                        <td><input type="text" id="level" name="level" size="2" value="<?php echo $user->level; ?>" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="submit" value="Edit User" />
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </body>
+</html>

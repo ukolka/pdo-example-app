@@ -37,7 +37,6 @@ class User extends AbstractController {
         $templateData = array(
             'page_title' => 'List Users'
         );
-        $users = array();
         $userCount = \Models\User::count();
         $page = 1;
         $num_per_page = 10;
@@ -70,6 +69,47 @@ class User extends AbstractController {
         echo $this->renderTemplate($templateData);
     }
 
+    public function delete() {
+        $templateData = array(
+            'page_title' => 'Delete user',
+            'success' => False
+        );
+        if (isset($_REQUEST['username'])) {
+            $templateData['success'] = \Models\User::delete($_REQUEST['username']);
+        }
+        echo $this->renderTemplate($templateData);
+    }
+
+    public function edit() {
+        $templateData = array(
+            'page_title' => 'Edit user',
+        );
+        if (isset($_REQUEST['username'])) {
+            $user = \Models\User::get($_REQUEST['username']);
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $editedUser = new \Models\User();
+            $editedUser->id = $user->id;
+            $editedUser->username = $_REQUEST['username'];
+            if (!empty($_REQUEST['password'])) {
+                $editedUser->setPassword($_REQUEST['password']);
+            } else {
+                $editedUser->password = $user->password;
+            }
+            $editedUser->description = $_REQUEST['description'];
+            $editedUser->level = $_REQUEST['level'];
+            if (!$editedUser->eq($user)) {
+                $editedUser->update();
+                $user = $editedUser;
+            }
+        }
+        $templateData['user'] = $user;
+        echo $this->renderTemplate($templateData);
+    }
+
+    /**
+     * Make dummy users.
+     */
     public function generate() {
         \Utils\UserGenerator::makeUsers();
     }

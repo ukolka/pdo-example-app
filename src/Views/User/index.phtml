@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include_once COMMON_TEMPLATES_DIR . 'head.phtml'; ?>
+        <?php /** @noinspection PhpIncludeInspection */include_once COMMON_TEMPLATES_DIR . 'head.phtml'; ?>
         <script type="text/javascript" src="/assets/js/userlist.js"></script>
     </head>
     <body>
     <header>
-        <?php include_once COMMON_TEMPLATES_DIR . 'navigation.phtml'; ?>
+        <?php /** @noinspection PhpIncludeInspection */include_once COMMON_TEMPLATES_DIR . 'navigation.phtml'; ?>
     </header>
     <div class="content">
         <div class="search">
@@ -67,9 +67,9 @@
                         <td><?php echo $user->description; ?></td>
                         <td><?php echo $user->level; ?></td>
                         <td>
-                            <a href="/user/delete?id=<?php echo $user->id ?>">Delete</a>
+                            <a href="/user/delete?username=<?php echo $user->username; ?>">Delete</a>
                             /
-                            <a href="/user/edit?id=<?php echo $user->id ?>">Edit</a>
+                            <a href="/user/edit?username=<?php echo $user->username; ?>">Edit</a>
                         </td>
                     </tr>
                 <?php } ?>
