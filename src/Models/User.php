@@ -35,13 +35,14 @@ SQL;
     private static $searchQuery = <<<SQL
 SELECT * FROM users
   WHERE username = :username OR description LIKE :keyword
+  ORDER BY %s
   LIMIT :limit OFFSET :offset;
 SQL;
 
     private static $searchCountQeury =
         "SELECT COUNT(id) AS count FROM users WHERE username = :username OR description LIKE :keyword;";
 
-    private static $getAllQuery = "SELECT * FROM users LIMIT :limit OFFSET :offset;";
+    private static $getAllQuery = "SELECT * FROM users ORDER BY %s LIMIT :limit OFFSET :offset;";
 
     private static $deleteQuery = "DELETE FROM users WHERE username = :username;";
 
@@ -131,13 +132,15 @@ SQL;
     /**
      * Looks up user by name or description.
      * @param $term
+     * @param $orderBy
      * @param int $limit
      * @param int $offset
      * @return array
      */
-    public static function search($term, $limit=10, $offset=1) {
+    public static function search($term, $orderBy, $limit=10, $offset=1) {
         $con = \DB\Connection::getConnection();
-        $stmt = $con->prepare(self::$searchQuery);
+        $query = sprintf(self::$searchQuery, $orderBy);
+        $stmt = $con->prepare($query);
         $stmt->bindParam(':username', $term);
         $keyword = "%$term%";
         $stmt->bindParam(':keyword', $keyword);
@@ -159,13 +162,15 @@ SQL;
 
     /**
      * Returns list of users.
-     * @param int $offset
+     * @param string $orderBy
      * @param int $limit
+     * @param int $offset
      * @return array
      */
-    public static function getAll($limit=10, $offset=1) {
+    public static function getAll($orderBy = 'id ASC', $limit = 10, $offset = 1) {
         $con = \DB\Connection::getConnection();
-        $stmt = $con->prepare(self::$getAllQuery);
+        $query = sprintf(self::$getAllQuery, $orderBy);
+        $stmt = $con->prepare($query);
         $stmt->bindParam(':limit', intval($limit, 10), \PDO::PARAM_INT);
         $stmt->bindParam(':offset', intval($offset, 10), \PDO::PARAM_INT);
         $stmt->execute();

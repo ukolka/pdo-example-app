@@ -33,6 +33,9 @@ class User extends AbstractController {
         echo $this->renderTemplate($templateData);
     }
 
+    /**
+     * User list controller.
+     */
     public function index() {
         $templateData = array(
             'page_title' => 'List Users'
@@ -54,15 +57,22 @@ class User extends AbstractController {
                 $page = 1;
             }
         }
+        // Order by
+        if (isset($_REQUEST['order_by']) && preg_match('/^\w+\s(asc|desc)$/', rawurldecode($_REQUEST['order_by']))) {
+           $orderBy = rawurldecode($_REQUEST['order_by']);
+        } else {
+           $orderBy = 'id ASC';
+        }
         // Search
         if (isset($_REQUEST['search']) ) {
             $term = strtolower(trim($_REQUEST['search']));
-            $users = \Models\User::search( $term, $num_per_page, ($page - 1) * $num_per_page);
+            $users = \Models\User::search( $term, $orderBy, $num_per_page, ($page - 1) * $num_per_page);
             $userCount = \Models\User::searchCount($term);
             $templateData['search'] = $_REQUEST['search'];
         } else {
-            $users = \Models\User::getAll($num_per_page, ($page - 1) * $num_per_page);
+            $users = \Models\User::getAll($orderBy, $num_per_page, ($page - 1) * $num_per_page);
         }
+        $templateData['order_by'] = rawurlencode($orderBy);
         $templateData['users'] = $users;
         $templateData['user_count'] = intval($userCount, 10);
         $templateData['page'] = $page;

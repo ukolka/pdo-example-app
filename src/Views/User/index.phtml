@@ -15,6 +15,7 @@
                 <input type="text" id="search" name="search"
                        value="<?php if (isset($search)) echo $search; ?>" placeholder="Type name here..."/>
                 <input type="hidden" name="num_per_page" value="<?php echo $num_per_page; ?>" />
+                <input type="hidden" name="order_by" value="<?php echo $order_by; ?>" />
                 <input type="submit" value="Go!" />
             </form>
         </div>
@@ -22,6 +23,7 @@
             <form action="/user/" method="post">
                 <label for="num_per_page">Results On Page</label>
                 <input type="hidden" name="search" value="<?php if (isset($search)) echo $search; ?>" />
+                <input type="hidden" name="order_by" value="<?php echo $order_by; ?>" />
                 <select name="num_per_page" id="num_per_page">
                     <?php foreach (array('10', '20', '50', 'All') as $num) { ?>
                         <option value="<?php echo $num; ?>"
@@ -36,7 +38,7 @@
                 $p = new \Utils\Paginator($user_count, $page, $num_per_page);
                 foreach ($p->paginate() as $page_name => $page_number) { ?>
                     <li>
-                        <a href="/user?page=<?php echo $page_number; ?>&search=<?php if (isset($search)) echo $search;?>&num_per_page=<?php if (isset($num_per_page)) echo $num_per_page; ?>">
+                        <a href="/user?page=<?php echo $page_number; ?>&search=<?php if (isset($search)) echo $search;?>&num_per_page=<?php if (isset($num_per_page)) echo $num_per_page; ?>&order_by=<?php echo $order_by; ?>">
                             <?php if ($page_name == $page) { ?>
                                 <strong><?php echo $page_name; ?></strong>
                             <?php
@@ -54,9 +56,12 @@
             <caption><h1>User List</h1></caption>
             <thead>
                 <tr>
-                    <th>Username</th>
-                    <th>Description</th>
-                    <th>Level</th>
+                    <th>Username <a href="/user?page=<?php echo $page; ?>&search=<?php if (isset($search)) echo $search; ?>&num_per_page=<?php if (isset($num_per_page)) echo $num_per_page; ?>&order_by=username%20asc">&#x21d1;</a>
+                        <a href="/user?page=<?php echo $page; ?>&search=<?php if (isset($search)) echo $search; ?>&num_per_page=<?php if (isset($num_per_page)) echo $num_per_page; ?>&order_by=username%20desc">&#x21d3;</a></th>
+                    <th>Description <a href="/user?page=<?php echo $page; ?>&search=<?php if (isset($search)) echo $search; ?>&num_per_page=<?php if (isset($num_per_page)) echo $num_per_page; ?>&order_by=description%20asc">&#x21d1;</a>
+                        <a href="/user?page=<?php echo $page; ?>&search=<?php if (isset($search)) echo $search; ?>&num_per_page=<?php if (isset($num_per_page)) echo $num_per_page; ?>&order_by=description%20desc">&#x21d3;</a></th>
+                    <th>Level <a href="/user?page=<?php echo $page; ?>&search=<?php if (isset($search)) echo $search; ?>&num_per_page=<?php if (isset($num_per_page)) echo $num_per_page; ?>&order_by=level%20asc">&#x21d1;</a>
+                        <a href="/user?page=<?php echo $page; ?>&search=<?php if (isset($search)) echo $search; ?>&num_per_page=<?php if (isset($num_per_page)) echo $num_per_page; ?>&order_by=level%20desc">&#x21d3;</a></th>
                     <th>Actions</th>
                 </tr>
             </thead>
