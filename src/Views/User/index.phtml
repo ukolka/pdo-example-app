@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <?php include_once COMMON_TEMPLATES_DIR . 'head.phtml'; ?>
+    </head>
+    <body>
+    <header>
+        <?php include_once COMMON_TEMPLATES_DIR . 'navigation.phtml'; ?>
+    </header>
+    <div class="content">
+        <div class="search">
+            <form action="" method="get">
+                <label for="search">Search</label>
+                <input type="text" id="search" value="" placeholder="Type name here..."/>
+                <input type="submit" value="Go!" />
+            </form>
+        </div>
+        <div class="controls">
+            <form action="" method="get">
+                <label for="num_pages">Results On Page</label>
+                <select name="num_pages" id="num_pages">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">30</option>
+                    <option value="All">All</option>
+                </select>
+            </form>
+            <ul>
+                <li><a href="/user/">First</a></li>
+                <li><a href="/user/">Previous</a></li>
+                <li><a href="/user/">1</a></li>
+                <li><a href="/user/">2</a></li>
+                <li><a href="/user/">3</a></li>
+                <li><a href="/user/">Next</a></li>
+                <li><a href="/user/">Last</a></li>
+            </ul>
+        </div>
+        <table>
+            <caption><h1>User List</h1></caption>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Description</th>
+                    <th>Level</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($users as $user) { ?>
+                    <tr>
+                        <td><?php echo $user->username; ?></td>
+                        <td><?php echo $user->description; ?></td>
+                        <td><?php echo $user->level; ?></td>
+                        <td>
+                            <a href="/user/delete?id=<?php echo $user->id ?>">Delete</a>
+                            /
+                            <a href="/user/edit?id=<?php echo $user->id ?>">Edit</a>
+                        </td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
+    </body>
+</html>
