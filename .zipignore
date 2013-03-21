@@ -1,5 +1,6 @@
-.git/
-.idea/
-.README.md
-.gitignore
-.afignore
+*.git/*
+*.idea/*
+*.README.md*
+*.gitignore*
+*.afignore*
+*.zipignore*
